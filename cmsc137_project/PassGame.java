@@ -9,7 +9,7 @@ public class PassGame {
 		System.out.println("==============================");
 
 		Scanner input = new Scanner(System.in);
-		System.out.println("How many players are playing (must be more than 3: ");
+		System.out.println("How many players are playing (must be more than 3): ");
 		String playerCountInit = input.nextLine();
 		int playerCount = Integer.parseInt(playerCountInit);
 
@@ -28,10 +28,15 @@ public class PassGame {
 			System.out.println("Player: " + playerArray[i].getName());
 		}
 
-		Deck deck = new Deck();
 
+		Deck deck = new Deck(playerCount);
 		deck.shuffleDeck();
-
+		System.out.println("\ncards in play:\n");
+		deck.showDeck();
+		
+		
+		//TODO: distribute to players
+		//NOTE: di ata nagwwork yung shuffledecknashushuffle yung deck
 
 	}
 

@@ -3,16 +3,17 @@ import java.util.*;
 public class Deck {
 
 	private Card[] deck; // Contains the full deck of cards
+	private Card[] playingDeck; //Contains the playing deck
 
 	private int usedCards; // number of counts used/not in the deck currently
 
 
-	public Deck(){
-		deck = new Card[52];
+	public Deck(int playerCount){
+		deck = new Card[4*playerCount];
 		int cardCounter = 0; // checks how many cards are created
 
 		for (int suit = 0; suit <= 3; suit++){
-			for (int value = 1; value <= 13; value++){
+			for (int value = 1; value <= playerCount; value++){
 				deck[cardCounter] = new Card(value, suit);
 				cardCounter++;
 			}
@@ -42,4 +43,9 @@ public class Deck {
 		usedCards++;
 		return deck[usedCards - 1];
 	}
+
+	public void showDeck() {
+		System.out.println(Arrays.toString(deck));
+	}
+
 }
