@@ -17,7 +17,7 @@ public class PassGame {
 
 		// Setting up the players
 
-		for (int i = 0; i < 3; i++){
+		for (int i = 0; i < playerCount; i++){
 			Scanner userName = new Scanner(System.in);
 			System.out.println("Enter player's name: ");
 			String name = userName.nextLine();
