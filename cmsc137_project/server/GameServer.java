@@ -12,11 +12,11 @@ public class GameServer extends Thread {
 	public GameServer(int port) throws IOException {
 		try {
 			serverSocket = new ServerSocket(port);
-			serverSocket.setSoTimeout(10000);
-		} catch(IOException e) {
+			serverSocket.setSoTimeout(20000);
+		}catch(IOException e) {
 			System.err.println("Could not listen on port: " + port);
 			System.exit(-1);
-		} catch(Exception e){
+		}catch(Exception e) {
 			System.out.println("error");
 		}
 	}
@@ -34,12 +34,16 @@ public class GameServer extends Thread {
 
                 // obtaining input and out streams
                 DataInputStream in = new DataInputStream(client.getInputStream());
+                System.out.println(in.readUTF()); //readUTF waits for input
+
                 DataOutputStream out = new DataOutputStream(client.getOutputStream());
+                
+                //connected = false
                 client.close();
-			} catch(SocketTimeoutException s) {
+			}catch(SocketTimeoutException s) {
 				System.out.println("Socket timed out!");
                 break;
-			} catch(IOException e){
+			}catch(IOException e) {
                 e.printStackTrace();
                 System.out.println("Input/Output Error!");
                 break;
@@ -52,10 +56,10 @@ public class GameServer extends Thread {
 			int port = Integer.parseInt(args[0]);
 			Thread t = new GameServer(port);
 			t.start();
-		} catch(IOException e){
+		}catch(IOException e) {
 			System.out.println("Usage: java GameServer <port no.>\n"+
                     "Make sure to use valid ports.");
-		} catch(ArrayIndexOutOfBoundsException e){
+		}catch(ArrayIndexOutOfBoundsException e) {
 			System.out.println("Usage: java GameServer <port no.>\n"+
                     "Insufficient arguments given.");
 		}
