@@ -1,24 +1,33 @@
 import java.util.*;
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 public class PassGame {
 
 	public static void main(String[] args) {
 
+		boolean playerRequirementSatisfied = false;
+
 		System.out.println("==============================");
 		System.out.println("       1-2-3 PASS GAME!!!     ");
 		System.out.println("==============================");
 
+		// Prompt to ask how many players are playing
 		Scanner input = new Scanner(System.in);
-		System.out.println("How many players are playing (must be more than 3): ");
+		System.out.println("How many players are playing (Minimum of 3 Players, Maximum of 13 players): ");
 		String playerCountInit = input.nextLine();
 		int playerCount = Integer.parseInt(playerCountInit);
 
+		while (playerRequirementSatisfied != true){
+			if (playerCount < 3 || playerCount > 13){ // if the input is invalid
+				System.out.println("INVALID NUMBER OF PLAYERS");
+				System.out.println(" ");
+				System.out.println("How many players are playing (Minimum of 3 Players, Maximum of 13 players): ");
+				playerCountInit = input.nextLine();
+				playerCount = Integer.parseInt(playerCountInit);
+			} else {
+				playerRequirementSatisfied = true;
+			}
+		}
+		
 		Player[] playerArray = new Player[playerCount];
 
 		// Setting up the players
@@ -34,16 +43,161 @@ public class PassGame {
 			System.out.println("Player: " + playerArray[i].getName());
 		}
 
+		Deck deck = new Deck(playerCount); //initializes the deck to be used
 
-		Deck deck = new Deck(playerCount);
-		deck.shuffleDeck();
-		System.out.println("\ncards in play:\n");
-		deck.showDeck();
-		
-		
-		//TODO: distribute to players
-		//NOTE: di ata nagwwork yung shuffledecknashushuffle yung deck
+		deck.shuffleDeck(); //shuffles the deck
 
+
+		// shows that the cards where shuffled and distributed (NOTE: HINDI DAPAT MAKITA ITO SA ACTUAL GAME. THIS JUST HELPS THE DEVELOPER TO SEE NA GUMAGANA ANG SHUFFLING)		
+		for (int distributionCount = 0; distributionCount < 4; distributionCount++){
+			for (int i = 0; i < playerCount; i++){
+				Card newCard = deck.drawCard();
+				playerArray[i].addCard(newCard);
+				System.out.println("The card drawn by " + playerArray[i].getName() + " is "  + newCard);
+			}
+		}
+		
+
+		// Main Game
+
+		boolean endOfGame = false; // checks if all players have submitted their hands
+		ArrayList<Card> passedCards = new ArrayList<Card>(); // Array List of Cards to be passed
+		int noOfFinishedPlayers = 0; // no. of players done
+		int gamePlayers = playerCount;
+
+		while(endOfGame != true){
+			
+			for (int i = 0; i < playerArray.length; i++){
+				System.out.println(" ");
+				System.out.println(" ");
+				System.out.println("***********************************************");
+				System.out.println(" ");
+				System.out.println("Player " + playerArray[i].getName() + "'s turn.");
+				System.out.println(" ");
+				System.out.println("***********************************************");
+				System.out.println("***************** CURRENT HAND ****************");
+				for (int j = 0; j < 4; j++){
+					Card handCard = playerArray[i].getCard(j);
+					System.out.println("[" + (j+1) + "] - " + handCard);
+				}
+				System.out.println("-----------------------------------------------");
+				System.out.println("MOVE OPTIONS:                                  ");
+				System.out.println(" ");
+				System.out.println("[P] - Pass a card                              ");
+				System.out.println("[S] - Submit hand                              ");
+				System.out.println(" ");
+				System.out.println("ENTER THE LETTER OF DESIRED MOVE:              ");
+				Scanner userInput = new Scanner(System.in);
+				char choice = userInput.next().charAt(0);
+				
+				//Decision made by user
+
+				// if the user decides to pass a card
+				if (choice == 'P'){
+					System.out.println(" ");
+					for (int j = 0; j < 4; j++){ // prints the current hand
+						Card handCard = playerArray[i].getCard(j);
+						System.out.println("[" + (j+1) + "] - " + handCard);
+					}
+					System.out.println("PICK A CARD TO PASS: "); // player chooses what card to be passed
+					Scanner cardInput = new Scanner(System.in);
+					String cardInputInit = input.nextLine();
+					int cardChoice = Integer.parseInt(cardInputInit);
+
+					if (cardChoice == 1){
+						Card cardToBePassed = playerArray[i].getCard(0);
+						System.out.println("You have passed the * " + cardToBePassed + " *.");
+						passedCards.add(cardToBePassed);
+						playerArray[i].removeCard(0);
+					} else if (cardChoice == 2){
+						Card cardToBePassed = playerArray[i].getCard(1);
+						System.out.println("You have passed the * " + cardToBePassed + " *.");
+						passedCards.add(cardToBePassed);
+						playerArray[i].removeCard(1);
+					} else if (cardChoice == 3){
+						Card cardToBePassed = playerArray[i].getCard(2);
+						System.out.println("You have passed the * " + cardToBePassed + " *.");
+						passedCards.add(cardToBePassed);
+						playerArray[i].removeCard(2);
+					} else if (cardChoice == 4){
+						Card cardToBePassed = playerArray[i].getCard(3);
+						System.out.println("You have passed the * " + cardToBePassed + " *.");
+						passedCards.add(cardToBePassed);
+						playerArray[i].removeCard(3);
+					}
+
+				} else if (choice == 'S'){
+					// checks if the hand of the player has the same value (4 kings, 4 queens, 4 jacks, 4 aces, 4 2s, 4 3s, etc.)
+					ArrayList<Card> cardsChecked = new ArrayList<Card>();
+
+					Card cardBeingChecked1 = playerArray[i].getCard(0);
+					Card cardBeingChecked2 = playerArray[i].getCard(1);
+					Card cardBeingChecked3 = playerArray[i].getCard(2);
+					Card cardBeingChecked4 = playerArray[i].getCard(3);
+					
+					// if the cards on the hand has the same value
+					if (cardBeingChecked1.getValue() == cardBeingChecked2.getValue() && cardBeingChecked1.getValue() == cardBeingChecked3.getValue() && cardBeingChecked1.getValue() == cardBeingChecked4.getValue()){
+						noOfFinishedPlayers = noOfFinishedPlayers + 1;
+						playerArray[i].clearHand();
+						System.out.println("CONGRATULATIONS! YOU HAVE SUBMITTED A HAND WITH THE SAME RANK!!!");
+						System.out.println(" ");
+						System.out.println("PLACEMENT: " + noOfFinishedPlayers + " / " + gamePlayers);
+						for (int j = 0; j < playerArray.length; j++){
+							if (playerArray[i] != playerArray[j]){
+								for (int k = j; k < playerArray.length - 1; k++){
+									playerArray[k] = playerArray[k+1];
+								}
+							}
+						}
+					} else { // if the cards on the hand have different values
+						System.out.println("SORRY! YOU ATTEMPTED TO SUBMIT A HAND WITH DIFFERENT RANKS!!!");
+						System.out.println("THE ONLY MOVE YOU CAN MAKE IS TO PASS A CARD!");
+						System.out.println(" ");
+						for (int j = 0; j < 4; j++){
+							Card handCard = playerArray[i].getCard(j);
+							System.out.println("[" + (j+1) + "] - " + handCard);
+						}
+						System.out.println("PICK A CARD TO PASS: "); // forces the user to pass a card
+						Scanner cardInput = new Scanner(System.in);
+						String cardInputInit = input.nextLine();
+						int cardChoice = Integer.parseInt(cardInputInit);
+
+						if (cardChoice == 1){
+							Card cardToBePassed = playerArray[i].getCard(0);
+							System.out.println("You have passed the * " + cardToBePassed + " *.");
+							passedCards.add(cardToBePassed);
+							playerArray[i].removeCard(0);
+						} else if (cardChoice == 2){
+							Card cardToBePassed = playerArray[i].getCard(1);
+							System.out.println("You have passed the * " + cardToBePassed + " *.");
+							passedCards.add(cardToBePassed);
+							playerArray[i].removeCard(1);
+						} else if (cardChoice == 3){
+							Card cardToBePassed = playerArray[i].getCard(2);
+							System.out.println("You have passed the * " + cardToBePassed + " *.");
+							passedCards.add(cardToBePassed);
+							playerArray[i].removeCard(2);
+						} else if (cardChoice == 4){
+							Card cardToBePassed = playerArray[i].getCard(3);
+							System.out.println("You have passed the * " + cardToBePassed + " *.");
+							passedCards.add(cardToBePassed);
+							playerArray[i].removeCard(3);
+						}
+					}
+				}
+			}
+
+			//Passing of Cards
+			for (int i = 0; i < playerArray.length; i++){
+				Card newHandCard = passedCards.get(0);
+				if ((i + 1) == playerArray.length){
+					playerArray[0].addCard(newHandCard);
+					passedCards.remove(0);
+				} else {
+					playerArray[i+1].addCard(newHandCard);
+					passedCards.remove(0);
+				}		
+			}
+		}		
 	}
-
 }

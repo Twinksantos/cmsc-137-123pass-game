@@ -18,16 +18,16 @@ public class Card {
 	private final int value;
 
 	public Card(int cardValue, int cardSuit){
-		this.value = cardValue;
-		this.suit = cardSuit;
+		value = cardValue;
+		suit = cardSuit;
 	}
 
 	public int getSuit() { // Gets the specified suit of cards
-		return this.suit;
+		return suit;
 	}
 
 	public int getValue() { // Gets the specified rank of cards
-		return this.value;
+		return value;
 	}
 
 	public String getSuitString() { // Converts the "suit" code into a string
@@ -60,7 +60,7 @@ public class Card {
 
 
 	public String toString(){ // Creates the "full name" of the card
-		return getValueString() + "of" + getSuitString();
+		return getValueString() + " of " + getSuitString();
 	}
 
 }

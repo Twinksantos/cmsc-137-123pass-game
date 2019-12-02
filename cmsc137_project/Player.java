@@ -19,10 +19,13 @@ public class Player {
 		player.add(c);
 	}
 
-	public void removeCard(Card c){ // Removes a card from the player's hand
-		player.remove(c);
+	public void removeCard(int index){ // Removes a card from the player's hand
+		player.remove(index);
 	}
 
+	public Card getCard(int index){ // Removes a card from the player's hand
+		return player.get(index);
+	}
 
 	public String getName() {
 		return name;

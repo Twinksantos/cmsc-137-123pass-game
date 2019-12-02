@@ -3,19 +3,34 @@ import java.util.*;
 public class Deck {
 
 	private Card[] deck; // Contains the full deck of cards
-	private Card[] playingDeck; //Contains the playing deck
 
 	private int usedCards; // number of counts used/not in the deck currently
 
-
-	public Deck(int playerCount){
-		deck = new Card[4*playerCount];
+	/*
+	public Deck(){
+		deck = new Card[52];
 		int cardCounter = 0; // checks how many cards are created
 
 		for (int suit = 0; suit <= 3; suit++){
-			for (int value = 1; value <= playerCount; value++){
+			for (int value = 1; value <= 13; value++){
 				deck[cardCounter] = new Card(value, suit);
 				cardCounter++;
+			}
+		}
+
+		usedCards = 0;
+	}
+	*/
+
+	// Function to return the deck that will be used in the game based on the number of players
+	public Deck(int noOfPlayers){
+		deck = new Card[4 * noOfPlayers];
+		int gameCardCounter = 0;
+
+		for (int suit = 0; suit <= 3; suit++){
+			for (int value = 1; value <= noOfPlayers; value++){
+				deck[gameCardCounter] = new Card(value, suit);
+				gameCardCounter++;
 			}
 		}
 
@@ -24,7 +39,7 @@ public class Deck {
 
 	public void shuffleDeck() { // shuffles the deck of cards
 		for (int i = deck.length-1; i>0; i-- ){
-			int rand = (int)Math.random()*(i+1);
+			int rand = (int)(Math.random()*(i+1));
 			Card temp = deck[i];
 			deck[i] = deck[rand];
 			deck[rand] = temp;
@@ -43,9 +58,4 @@ public class Deck {
 		usedCards++;
 		return deck[usedCards - 1];
 	}
-
-	public void showDeck() {
-		System.out.println(Arrays.toString(deck));
-	}
-
 }
