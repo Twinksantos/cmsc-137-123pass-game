@@ -3,7 +3,7 @@ import java.util.*;
 public class PassGame {
 
 	public static void main(String[] args) {
-
+		
 		boolean playerRequirementSatisfied = false;
 
 		System.out.println("==============================");
@@ -15,7 +15,7 @@ public class PassGame {
 		System.out.println("How many players are playing (Minimum of 3 Players, Maximum of 13 players): ");
 		String playerCountInit = input.nextLine();
 		int playerCount = Integer.parseInt(playerCountInit);
-
+		int rankCount = 0;
 		while (playerRequirementSatisfied != true){
 			if (playerCount < 3 || playerCount > 13){ // if the input is invalid
 				System.out.println("INVALID NUMBER OF PLAYERS");
@@ -29,6 +29,7 @@ public class PassGame {
 		}
 		
 		Player[] playerArray = new Player[playerCount];
+		Player[] rankingArray = new Player[playerCount];	// ARRAY FOR SAVING RANKS WHILE IN GAME, FOR LATER PRINTING
 
 		// Setting up the players
 
@@ -64,10 +65,11 @@ public class PassGame {
 		ArrayList<Card> passedCards = new ArrayList<Card>(); // Array List of Cards to be passed
 		int noOfFinishedPlayers = 0; // no. of players done
 		int gamePlayers = playerCount;
+		int counts = gamePlayers;
 
 		while(endOfGame != true){
 			
-			for (int i = 0; i < playerArray.length; i++){
+			for (int i = 0; i < counts; i++){
 				System.out.println(" ");
 				System.out.println(" ");
 				System.out.println("***********************************************");
@@ -138,14 +140,25 @@ public class PassGame {
 					// if the cards on the hand has the same value
 					if (cardBeingChecked1.getValue() == cardBeingChecked2.getValue() && cardBeingChecked1.getValue() == cardBeingChecked3.getValue() && cardBeingChecked1.getValue() == cardBeingChecked4.getValue()){
 						noOfFinishedPlayers = noOfFinishedPlayers + 1;
-						playerArray[i].clearHand();
+						rankingArray[rankCount] = new Player(playerArray[i].getName());
+						rankCount ++;
+						for(int jar = i; jar < counts-1; jar++){
+							playerArray[jar] = playerArray[jar+1];
+						}
+						// playerArray[i].clearHand();
+						// if(i != counts){
+						// 	playerArray[i]= new Player(playerArray[i+1].getName());
+						// 	player	
+						// }
 						System.out.println("CONGRATULATIONS! YOU HAVE SUBMITTED A HAND WITH THE SAME RANK!!!");
 						System.out.println(" ");
 						System.out.println("PLACEMENT: " + noOfFinishedPlayers + " / " + gamePlayers);
-						for (int j = 0; j < playerArray.length; j++){
+						counts --;
+						for (int j = 0; j < counts; j++){ 
 							if (playerArray[i] != playerArray[j]){
-								for (int k = j; k < playerArray.length - 1; k++){
+								for (int k = j; k < counts - 1; k++){// ELEMENT SHIFTING
 									playerArray[k] = playerArray[k+1];
+									playerArray[k+1].clearHand();
 								}
 							}
 						}
@@ -188,14 +201,27 @@ public class PassGame {
 			}
 
 			//Passing of Cards
-			for (int i = 0; i < playerArray.length; i++){
-				Card newHandCard = passedCards.get(0);
-				if ((i + 1) == playerArray.length){
+			for (int i = 0; i < counts; i++){
+				System.out.println(gamePlayers);
+				System.out.println(counts);
+				if(counts-1 == 0){
+					//Boolean endOfGame = true;
+					rankingArray[gamePlayers-1] = new Player(playerArray[0].getName());
+					System.out.println("The game has ended! These are the following rankings of each player: \n");
+					for(int r = 0; r < gamePlayers; r++){
+						System.out.println("Rank " + (r+1) + ": " + rankingArray[r].getName());
+					}
+					System.exit(1);
+				}
+				else{
+					Card newHandCard = passedCards.get(0);
+				if ((i + 1) == counts){
 					playerArray[0].addCard(newHandCard);
 					passedCards.remove(0);
 				} else {
 					playerArray[i+1].addCard(newHandCard);
 					passedCards.remove(0);
+				}
 				}		
 			}
 		}		
