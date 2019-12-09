@@ -12,7 +12,7 @@ public class GameServer extends Thread {
 	public GameServer(int port) throws IOException {
 		try {
 			serverSocket = new ServerSocket(port);
-			serverSocket.setSoTimeout(20000);
+			//serverSocket.setSoTimeout(50000);
 		}catch(IOException e) {
 			System.err.println("Could not listen on port: " + port);
 			System.exit(-1);
@@ -23,23 +23,38 @@ public class GameServer extends Thread {
 
 	public void run() {
 		boolean connected = true;
+		Scanner input = new Scanner(System.in);
 		while(connected) {
 			try{
-				System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "...");
-				/* Start accepting data from the ServerSocket */
-                //waits or accepts connection from client
-                Socket client = serverSocket.accept();
+				System.out.print("How many players? (min. of 3 & max. of 13): ");
+				String noOfPlayersInit = input.nextLine();
+				int noOfPlayers = Integer.parseInt(noOfPlayersInit);
+				
+				for(int i=0; i < noOfPlayers; i++){
 
-                System.out.println("Just connected to " + client.getRemoteSocketAddress());
-
+					System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "...");
+					/* Start accepting data from the ServerSocket */
+	                //waits or accepts connection from client
+	                Socket client = serverSocket.accept();
+	                
+	                DataOutputStream out = new DataOutputStream(client.getOutputStream());
+	                out.writeUTF("What is your name? " + client.getRemoteSocketAddress());
+	                
+	                System.out.println("Just connected to " + client.getRemoteSocketAddress());
+	                DataInputStream in = new DataInputStream(client.getInputStream());
+                	System.out.println(in.readUTF());
+	                client.close();
+           		}
                 // obtaining input and out streams
-                DataInputStream in = new DataInputStream(client.getInputStream());
+                /*DataInputStream in = new DataInputStream(client.getInputStream());
                 System.out.println(in.readUTF()); //readUTF waits for input
 
-                DataOutputStream out = new DataOutputStream(client.getOutputStream());
+                DataOutputStream out = new DataOutputStream(client.getOutputStream());*/
                 
+
+
                 //connected = false
-                client.close();
+                
 			}catch(SocketTimeoutException s) {
 				System.out.println("Socket timed out!");
                 break;
