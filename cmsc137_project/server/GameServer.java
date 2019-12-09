@@ -29,7 +29,8 @@ public class GameServer extends Thread {
 				System.out.print("How many players? (min. of 3 & max. of 13): ");
 				String noOfPlayersInit = input.nextLine();
 				int noOfPlayers = Integer.parseInt(noOfPlayersInit);
-				
+				//Player[] playerArray = new Player[playerCount];
+
 				for(int i=0; i < noOfPlayers; i++){
 
 					System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "...");
@@ -38,18 +39,15 @@ public class GameServer extends Thread {
 	                Socket client = serverSocket.accept();
 	                
 	                DataOutputStream out = new DataOutputStream(client.getOutputStream());
-	                out.writeUTF("What is your name? " + client.getRemoteSocketAddress());
+	                out.writeUTF("What is your name? ");
+	                //playerArray[i] = new Player(name);
 	                
 	                System.out.println("Just connected to " + client.getRemoteSocketAddress());
 	                DataInputStream in = new DataInputStream(client.getInputStream());
                 	System.out.println(in.readUTF());
+
 	                client.close();
            		}
-                // obtaining input and out streams
-                /*DataInputStream in = new DataInputStream(client.getInputStream());
-                System.out.println(in.readUTF()); //readUTF waits for input
-
-                DataOutputStream out = new DataOutputStream(client.getOutputStream());*/
                 
 
 
